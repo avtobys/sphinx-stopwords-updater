@@ -46,7 +46,9 @@ for w in $(cat /usr/local/sphinx/stopwords.txt); do
     echo $w >$tmp_dir/stopwords.txt
 done
 
-cat /usr/local/sphinx/stopwords.txt $tmp_dir/stopwords.txt | sort | uniq | tr -s '\n' ' ' >/usr/local/sphinx/stopwords.txt
+cat /usr/local/sphinx/stopwords.txt $tmp_dir/stopwords.txt | sort | uniq | tr -s '\n' ' ' >$tmp_dir/new_stopwords.txt
+mv $tmp_dir/new_stopwords.txt /usr/local/sphinx/stopwords.txt
 echo "$(wc -w /usr/local/sphinx/stopwords.txt) stopwords in new merged file..."
+rm -rf $tmp_dir
 
 indexer -c /etc/sphinxsearch/sphinx.conf --rotate --all
