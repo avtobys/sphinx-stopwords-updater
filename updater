@@ -41,7 +41,8 @@ for index_name in $(cat $tmp_dir/query_long_users.log | sed -r 's/.*\[(.*)\].*/\
 done
 
 echo "$(cat $tmp_dir/stopwords.txt | sort | uniq | wc -w) stopwords found..."
-echo "$(wc -w /usr/local/sphinx/stopwords.txt) stopwords in old file..."
+
+echo ${OLD:=$(cat /usr/local/sphinx/stopwords.txt | wc -w)} stopwords in old file...
 
 for w in $(cat /usr/local/sphinx/stopwords.txt); do
     echo $w >>$tmp_dir/stopwords.txt
@@ -49,7 +50,11 @@ done
 
 cat $tmp_dir/stopwords.txt | sort | uniq | tr -s '\n' ' ' >$tmp_dir/new_stopwords.txt
 mv $tmp_dir/new_stopwords.txt /usr/local/sphinx/stopwords.txt
-echo "$(wc -w /usr/local/sphinx/stopwords.txt) stopwords in new merged file..."
+
+echo ${NEW:=$(cat /usr/local/sphinx/stopwords.txt | wc -w)} stopwords in new merged file...
 rm -rf $tmp_dir
 
-indexer -c /etc/sphinxsearch/sphinx.conf --rotate --all
+if (( $OLD != $NEW )); then
+    indexer -c /etc/sphinxsearch/sphinx.conf --rotate --all
+fi
+
