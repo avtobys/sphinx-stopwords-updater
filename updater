@@ -39,11 +39,11 @@ for index_name in $(cat $tmp_dir/query_long_users.log | sed -r 's/.*\[(.*)\].*/\
     grep "\[$index_name\]" $tmp_dir/query_long.log | sed -r "s/.*\[$index_name\] //g" | sed -r 's/\W/ /g' | sed -r 's/[0-9]//g' | sed -r 's/\s+/ /g' | awk 'BEGIN {FS = " "}{for (x = 1; x <= NF; x++) { printf "%s%s",$x, "\n"}}' | sed -r 's/^[a-zA-Z]$//g' | sed '/^$/d' | sort | uniq -c | sort -rn | head -n 20 | awk '{print $2}' >>$tmp_dir/stopwords.txt
 done
 
-echo "$(wc -w $tmp_dir/stopwords.txt) stopwords found..."
+echo "$(cat $tmp_dir/stopwords.txt | sort | uniq | wc -w) stopwords found..."
 echo "$(wc -w /usr/local/sphinx/stopwords.txt) stopwords in old file..."
 
 for w in $(cat /usr/local/sphinx/stopwords.txt); do
-    echo $w >$tmp_dir/stopwords.txt
+    echo $w >>$tmp_dir/stopwords.txt
 done
 
 cat /usr/local/sphinx/stopwords.txt $tmp_dir/stopwords.txt | sort | uniq | tr -s '\n' ' ' >$tmp_dir/new_stopwords.txt
