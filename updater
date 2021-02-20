@@ -36,6 +36,7 @@ awk '$6>1{print}' $tmp_dir/query.log >$tmp_dir/query_long.log
 awk '{print $13}' $tmp_dir/query_long.log | sort | uniq -c | sort -rn >$tmp_dir/query_long_users.log
 
 for index_name in $(cat $tmp_dir/query_long_users.log | sed -r 's/.*\[(.*)\].*/\1/'); do
+    echo check $index_name
     grep "\[$index_name\]" $tmp_dir/query_long.log | sed -r "s/.*\[$index_name\] //g" | sed -r 's/\W/ /g' | sed -r 's/[0-9]//g' | sed -r 's/\s+/ /g' | awk 'BEGIN {FS = " "}{for (x = 1; x <= NF; x++) { printf "%s%s",$x, "\n"}}' | sed -r 's/^[a-zA-Z]$//g' | sed '/^$/d' | sort | uniq -c | sort -rn | head -n 20 | awk '{print $2}' >>$tmp_dir/stopwords.txt
 done
 
