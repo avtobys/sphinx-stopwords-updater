@@ -52,6 +52,9 @@ cat $tmp_dir/stopwords.txt | sort | uniq | tr -s '\n' ' ' >$tmp_dir/new_stopword
 mv $tmp_dir/new_stopwords.txt /usr/local/sphinx/stopwords.txt
 
 echo ${NEW:=$(cat /usr/local/sphinx/stopwords.txt | wc -w)} stopwords in new merged file...
+
+echo "New stopwords: $(cat /usr/local/sphinx/stopwords.txt)"
+
 rm -rf $tmp_dir
 
 if (( $OLD != $NEW )); then
